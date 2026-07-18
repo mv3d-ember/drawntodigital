@@ -4,71 +4,88 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Paper Palette → Procreate Swatches</title>
+  <meta name="description" content="Photograph a paper paint palette and export the colors as ready-to-use Procreate swatches, entirely in your browser." />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main class="container">
-    <h1>Paper Palette → Procreate Swatches</h1>
+  <div class="page">
+    <header class="hero">
+      <p class="eyebrow">palette.mattwhyte.com</p>
+      <h1>Paper Palette <span class="arrow">→</span> Procreate Swatches</h1>
+      <p class="subtitle">
+        Photograph a physical paint palette, tell it your grid, and export the
+        colors as a ready-to-use <code>.swatches</code> file for Procreate.
+      </p>
+    </header>
 
-    <section class="field">
-      <label for="file-input">Upload a photo of your palette</label>
-      <input id="file-input" type="file" accept="image/jpeg,image/png,image/jpg" />
-    </section>
-
-    <section id="preview-section" class="hidden">
-      <h2>Original photo</h2>
-      <img id="original-preview" alt="Original upload preview" />
-
-      <div class="grid-controls">
-        <div class="field">
-          <label for="rows-input">Rows in your grid</label>
-          <input id="rows-input" type="number" min="1" max="20" value="4" />
-        </div>
-        <div class="field">
-          <label for="cols-input">Columns in your grid</label>
-          <input id="cols-input" type="number" min="1" max="20" value="4" />
-        </div>
-      </div>
-
-      <div class="field checkbox-field">
-        <label>
-          <input id="use-reference" type="checkbox" />
-          Use a reference white/gray square for color correction
+    <main class="stack">
+      <section class="card">
+        <h2 class="card-title"><span class="step">1</span>Upload a photo of your palette</h2>
+        <label for="file-input" class="dropzone">
+          <input id="file-input" type="file" accept="image/jpeg,image/png,image/jpg" />
+          <span class="dropzone-icon" aria-hidden="true">🎨</span>
+          <span class="dropzone-text">Click to choose a photo</span>
+          <span class="dropzone-hint">JPG or PNG</span>
         </label>
-      </div>
+      </section>
 
-      <div id="reference-fields" class="grid-controls hidden">
-        <p>Tell me which cell (row, col) is your reference square. Top-left cell is (0, 0).</p>
-        <div class="field">
-          <label for="ref-row-input">Reference row</label>
-          <input id="ref-row-input" type="number" min="0" max="3" value="0" />
+      <section id="preview-section" class="card hidden">
+        <h2 class="card-title"><span class="step">2</span>Set up your grid</h2>
+        <img id="original-preview" alt="Original upload preview" />
+
+        <div class="grid-controls">
+          <div class="field">
+            <label for="rows-input">Rows in your grid</label>
+            <input id="rows-input" type="number" min="1" max="20" value="4" />
+          </div>
+          <div class="field">
+            <label for="cols-input">Columns in your grid</label>
+            <input id="cols-input" type="number" min="1" max="20" value="4" />
+          </div>
         </div>
-        <div class="field">
-          <label for="ref-col-input">Reference col</label>
-          <input id="ref-col-input" type="number" min="0" max="3" value="0" />
+
+        <label class="checkbox-field">
+          <input id="use-reference" type="checkbox" />
+          <span>Use a reference white/gray square for color correction</span>
+        </label>
+
+        <div id="reference-fields" class="grid-controls reference-controls hidden">
+          <p class="hint">Which cell is your reference square? Top-left cell is (0, 0).</p>
+          <div class="field">
+            <label for="ref-row-input">Reference row</label>
+            <input id="ref-row-input" type="number" min="0" max="3" value="0" />
+          </div>
+          <div class="field">
+            <label for="ref-col-input">Reference col</label>
+            <input id="ref-col-input" type="number" min="0" max="3" value="0" />
+          </div>
         </div>
-      </div>
 
-      <button id="extract-btn" type="button">Extract palette</button>
+        <button id="extract-btn" type="button" class="btn btn-primary">Extract palette</button>
 
-      <div id="corrected-section" class="hidden">
-        <h2>After white balance correction</h2>
-        <canvas id="corrected-canvas"></canvas>
-      </div>
-    </section>
+        <div id="corrected-section" class="corrected-section hidden">
+          <h3>After white balance correction</h3>
+          <canvas id="corrected-canvas"></canvas>
+        </div>
+      </section>
 
-    <section id="palette-section" class="hidden">
-      <h2>Extracted colors</h2>
-      <div id="swatch-grid" class="swatch-grid"></div>
+      <section id="palette-section" class="card hidden">
+        <h2 class="card-title"><span class="step">3</span>Export to Procreate</h2>
+        <div id="swatch-grid" class="swatch-grid"></div>
 
-      <div class="field">
-        <label for="palette-name">Palette name</label>
-        <input id="palette-name" type="text" value="MyPalette" />
-      </div>
+        <div class="field">
+          <label for="palette-name">Palette name</label>
+          <input id="palette-name" type="text" value="MyPalette" />
+        </div>
 
-      <button id="export-btn" type="button">Export as .swatches</button>
-    </section>
-  </main>
+        <button id="export-btn" type="button" class="btn btn-primary">Export as .swatches</button>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Runs entirely in your browser — nothing is uploaded anywhere.</p>
+    </footer>
+  </div>
 
   <canvas id="work-canvas" class="hidden"></canvas>
 
