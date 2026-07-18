@@ -387,11 +387,50 @@ canvas#corrected-canvas {
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
+/* Format toggle */
+
+.format-toggle {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.format-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.4rem 0.75rem;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.format-btn:hover {
+  color: var(--ink);
+}
+
+.format-btn.active {
+  background: var(--accent);
+  color: #fff8f2;
+}
+
+.format-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
 /* Swatches */
 
 .swatch-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -410,9 +449,11 @@ canvas#corrected-canvas {
 }
 
 .swatch div:last-child {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
+  line-height: 1.3;
   font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   color: var(--ink-soft);
+  overflow-wrap: break-word;
 }
 
 .hidden {

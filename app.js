@@ -22,12 +22,14 @@ const paletteSection = document.getElementById("palette-section");
 const swatchGrid = document.getElementById("swatch-grid");
 const paletteNameInput = document.getElementById("palette-name");
 const exportBtn = document.getElementById("export-btn");
+const formatButtons = document.querySelectorAll(".format-btn");
 
 const workCanvas = document.getElementById("work-canvas");
 const workCtx = workCanvas.getContext("2d", { willReadFrequently: true });
 
 let currentImage = null; // HTMLImageElement of the uploaded photo
 let currentPalette = null; // array of [r, g, b]
+let currentFormat = "rgb";
 
 // --- Core functions (mirrors the Python implementation) ---
 
@@ -106,7 +108,7 @@ function whiteBalanceCorrect(imageData, width, height, refAvg) {
   return out;
 }
 
-function rgbToProcreateHsb(r, g, b) {
+function rgbToHsv(r, g, b) {
   const rn = r / 255, gn = g / 255, bn = b / 255;
   const max = Math.max(rn, gn, bn), min = Math.min(rn, gn, bn);
   const v = max;
@@ -129,7 +131,89 @@ function rgbToProcreateHsb(r, g, b) {
     h /= 6;
   }
 
+  return { h, s, v };
+}
+
+function rgbToProcreateHsb(r, g, b) {
+  const { h, s, v } = rgbToHsv(r, g, b);
   return { hue: h, saturation: s, brightness: v, colorSpace: 0, alpha: 1 };
+}
+
+function rgbToHex(r, g, b) {
+  const toHex = (v) => v.toString(16).padStart(2, "0");
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
+}
+
+function rgbToCmyk(r, g, b) {
+  const rn = r / 255, gn = g / 255, bn = b / 255;
+  const k = 1 - Math.max(rn, gn, bn);
+
+  if (k === 1) {
+    return { c: 0, m: 0, y: 0, k: 100 };
+  }
+
+  const c = (1 - rn - k) / (1 - k);
+  const m = (1 - gn - k) / (1 - k);
+  const y = (1 - bn - k) / (1 - k);
+
+  return {
+    c: Math.round(c * 100),
+    m: Math.round(m * 100),
+    y: Math.round(y * 100),
+    k: Math.round(k * 100),
+  };
+}
+
+function rgbToHsl(r, g, b) {
+  const rn = r / 255, gn = g / 255, bn = b / 255;
+  const max = Math.max(rn, gn, bn), min = Math.min(rn, gn, bn);
+  const l = (max + min) / 2;
+  let h = 0, s = 0;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case rn:
+        h = (gn - bn) / d + (gn < bn ? 6 : 0);
+        break;
+      case gn:
+        h = (bn - rn) / d + 2;
+        break;
+      case bn:
+        h = (rn - gn) / d + 4;
+        break;
+    }
+    h /= 6;
+  }
+
+  return {
+    h: Math.round(h * 360),
+    s: Math.round(s * 100),
+    l: Math.round(l * 100),
+  };
+}
+
+function formatColor(r, g, b, format) {
+  switch (format) {
+    case "hex":
+      return rgbToHex(r, g, b);
+    case "cmyk": {
+      const { c, m, y, k } = rgbToCmyk(r, g, b);
+      return `cmyk(${c}, ${m}, ${y}, ${k})`;
+    }
+    case "hsb": {
+      const { h, s, v } = rgbToHsv(r, g, b);
+      return `hsb(${Math.round(h * 360)}°, ${Math.round(s * 100)}%, ${Math.round(v * 100)}%)`;
+    }
+    case "hsl": {
+      const { h, s, l } = rgbToHsl(r, g, b);
+      return `hsl(${h}°, ${s}%, ${l}%)`;
+    }
+    case "rgb":
+    default:
+      return `(${r}, ${g}, ${b})`;
+  }
 }
 
 async function buildSwatchesFile(palette, name) {
@@ -237,7 +321,7 @@ function renderPalette(palette) {
     swatchColor.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
 
     const label = document.createElement("div");
-    label.textContent = `(${r}, ${g}, ${b})`;
+    label.textContent = formatColor(r, g, b, currentFormat);
 
     cell.appendChild(swatchColor);
     cell.appendChild(label);
@@ -246,6 +330,24 @@ function renderPalette(palette) {
 
   paletteSection.classList.remove("hidden");
 }
+
+function setFormat(format) {
+  currentFormat = format;
+
+  formatButtons.forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.format === format);
+  });
+
+  if (currentPalette) {
+    renderPalette(currentPalette);
+  }
+}
+
+formatButtons.forEach((btn) => {
+  btn.addEventListener("click", () => setFormat(btn.dataset.format));
+});
+
+setFormat(currentFormat);
 
 exportBtn.addEventListener("click", async () => {
   if (!currentPalette) return;
