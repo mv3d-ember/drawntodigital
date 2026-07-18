@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paper Palette → Procreate Swatches</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Paper Palette → Procreate Swatches</h1>
+
+    <section class="field">
+      <label for="file-input">Upload a photo of your palette</label>
+      <input id="file-input" type="file" accept="image/jpeg,image/png,image/jpg" />
+    </section>
+
+    <section id="preview-section" class="hidden">
+      <h2>Original photo</h2>
+      <img id="original-preview" alt="Original upload preview" />
+
+      <div class="grid-controls">
+        <div class="field">
+          <label for="rows-input">Rows in your grid</label>
+          <input id="rows-input" type="number" min="1" max="20" value="4" />
+        </div>
+        <div class="field">
+          <label for="cols-input">Columns in your grid</label>
+          <input id="cols-input" type="number" min="1" max="20" value="4" />
+        </div>
+      </div>
+
+      <div class="field checkbox-field">
+        <label>
+          <input id="use-reference" type="checkbox" />
+          Use a reference white/gray square for color correction
+        </label>
+      </div>
+
+      <div id="reference-fields" class="grid-controls hidden">
+        <p>Tell me which cell (row, col) is your reference square. Top-left cell is (0, 0).</p>
+        <div class="field">
+          <label for="ref-row-input">Reference row</label>
+          <input id="ref-row-input" type="number" min="0" max="3" value="0" />
+        </div>
+        <div class="field">
+          <label for="ref-col-input">Reference col</label>
+          <input id="ref-col-input" type="number" min="0" max="3" value="0" />
+        </div>
+      </div>
+
+      <button id="extract-btn" type="button">Extract palette</button>
+
+      <div id="corrected-section" class="hidden">
+        <h2>After white balance correction</h2>
+        <canvas id="corrected-canvas"></canvas>
+      </div>
+    </section>
+
+    <section id="palette-section" class="hidden">
+      <h2>Extracted colors</h2>
+      <div id="swatch-grid" class="swatch-grid"></div>
+
+      <div class="field">
+        <label for="palette-name">Palette name</label>
+        <input id="palette-name" type="text" value="MyPalette" />
+      </div>
+
+      <button id="export-btn" type="button">Export as .swatches</button>
+    </section>
+  </main>
+
+  <canvas id="work-canvas" class="hidden"></canvas>
+
+  <script src="vendor/jszip.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
